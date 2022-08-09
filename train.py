@@ -8,12 +8,12 @@ from utils import yaml_config_hook, save_model
 from torch.utils import data
 
 
-def train():
+def train(device):
     loss_epoch = 0
     for step, ((x_i, x_j), _) in enumerate(data_loader):
         optimizer.zero_grad()
-        x_i = x_i.to('cuda')
-        x_j = x_j.to('cuda')
+        x_i = x_i.to(device)
+        x_j = x_j.to(device)
         z_i, z_j, c_i, c_j = model(x_i, x_j)
         loss_instance = criterion_instance(z_i, z_j)
         loss_cluster = criterion_cluster(c_i, c_j)
@@ -21,8 +21,7 @@ def train():
         loss.backward()
         optimizer.step()
         if step % 50 == 0:
-            print(
-                f"Step [{step}/{len(data_loader)}]\t loss_instance: {loss_instance.item()}\t loss_cluster: {loss_cluster.item()}")
+            print(f"Step [{step}/{len(data_loader)}]\t loss_instance: {loss_instance.item()}\t loss_cluster: {loss_cluster.item()}")
         loss_epoch += loss.item()
     return loss_epoch
 
@@ -33,6 +32,7 @@ if __name__ == "__main__":
     for k, v in config.items():
         parser.add_argument(f"--{k}", default=v, type=type(v))
     args = parser.parse_args()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if not os.path.exists(args.model_path):
         os.makedirs(args.model_path)
 
@@ -99,10 +99,12 @@ if __name__ == "__main__":
         drop_last=True,
         num_workers=args.workers,
     )
+    
     # initialize model
     res = resnet.get_resnet(args.resnet)
     model = network.Network(res, args.feature_dim, class_num)
-    model = model.to('cuda')
+    model = model.to(device)
+    
     # optimizer / loss
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     if args.reload:
@@ -111,14 +113,16 @@ if __name__ == "__main__":
         model.load_state_dict(checkpoint['net'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         args.start_epoch = checkpoint['epoch'] + 1
-    loss_device = torch.device("cuda")
+    
+    loss_device = torch.device(device)
     criterion_instance = contrastive_loss.InstanceLoss(args.batch_size, args.instance_temperature, loss_device).to(
         loss_device)
     criterion_cluster = contrastive_loss.ClusterLoss(class_num, args.cluster_temperature, loss_device).to(loss_device)
+    
     # train
     for epoch in range(args.start_epoch, args.epochs):
         lr = optimizer.param_groups[0]["lr"]
-        loss_epoch = train()
+        loss_epoch = train(device)
         if epoch % 10 == 0:
             save_model(args, model, optimizer, epoch)
         print(f"Epoch [{epoch}/{args.epochs}]\t Loss: {loss_epoch / len(data_loader)}")

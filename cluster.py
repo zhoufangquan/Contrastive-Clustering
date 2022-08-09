@@ -102,6 +102,7 @@ if __name__ == "__main__":
         class_num = 200
     else:
         raise NotImplementedError
+    
     data_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=500,
@@ -145,5 +146,6 @@ if __name__ == "__main__":
         for i in range(20):
             for j in super_label[i]:
                 Y[Y_copy == j] = i
+    
     nmi, ari, f, acc = evaluation.evaluate(Y, X)
     print('NMI = {:.4f} ARI = {:.4f} F = {:.4f} ACC = {:.4f}'.format(nmi, ari, f, acc))
