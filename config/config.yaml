@@ -1,20 +1,28 @@
 # general
-seed: 42
+seed: 2022
 workers: 4
-dataset_dir: "./datasets"
+
+# dataset
+data_dir: "./datasets"
+data_name: "AgNews"
+class_num: 4
 
 # train options
 batch_size: 128
-image_size: 224
-start_epoch: 1000
-epochs: 1000
-dataset: "CIFAR-10" # CIFAR-10 / CIFAR-100 / STL-10 / ImageNet-10 / ImageNet-dogs / tiny-ImageNet
+start_epoch: 0
+epochs: 100
+
 
 # model options
-resnet: "ResNet34" # ResNet18 / ResNet34 / ResNet50
+pretrained_model: "PairSupCon"  # PairSupCon / BERT / SBERT
+bert: "pairsupcon-base"  # bertbase / bertlarge / pairsupcon-base / pairsupcon-large ...
 feature_dim: 128
-model_path: "save/CIFAR-10"
-reload: False
+max_len: 200  # max len of seq 
+
+check_point_path: "./save/"  # 
+reload: False  # continue training or not
+use_noise: False
+noise_lambda: 0.15 
 
 # loss options
 learning_rate: 0.0003
