@@ -12,13 +12,13 @@ class Network(nn.Module):
         self.instance_projector = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size,
                       self.bert.config.hidden_size),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),  # 设置为 TRUE 可以节省一部分的空间
             nn.Linear(self.bert.config.hidden_size, self.feature_dim),
         )
         self.cluster_projector = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size,
                       self.bert.config.hidden_size),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),  # 设置为 TRUE 可以节省一部分的空间
             nn.Linear(self.bert.config.hidden_size, self.cluster_num),
             nn.Softmax(dim=1)
         )
