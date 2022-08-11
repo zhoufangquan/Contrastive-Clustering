@@ -1,6 +1,7 @@
 # general
 seed: 2022
 workers: 4
+log_dir : './log'
 
 # dataset
 data_dir: "./datasets"
@@ -8,7 +9,7 @@ data_name: "AgNews"
 class_num: 4
 
 # train options
-batch_size: 128
+batch_size: 4
 start_epoch: 0
 epochs: 100
 
