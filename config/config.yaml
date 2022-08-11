@@ -10,6 +10,7 @@ class_num: 4
 
 # train options
 batch_size: 4
+accumulation_steps: 1000  # 
 start_epoch: 0
 epochs: 100
 
