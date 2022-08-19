@@ -22,7 +22,7 @@ feature_dim: 128
 max_len: 200  # max len of seq 
 
 check_point_path: "./save/"  # 
-reload: False  # continue training or not
+resume: False  # continue training or not
 use_noise: False
 noise_lambda: 0.15 
 
