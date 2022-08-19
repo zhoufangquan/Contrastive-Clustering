@@ -88,7 +88,7 @@ if __name__ == "__main__":
     # optimizer / loss
     optimizer = torch.optim.Adam(
         model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    if args.reload:
+    if args.resume:
         model_fp = os.path.join(args.check_point_path,
                                 "checkpoint_{}.tar".format(args.start_epoch))
         checkpoint = torch.load(model_fp)
