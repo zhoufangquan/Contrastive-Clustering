@@ -93,8 +93,8 @@ def collate_fn(batch):
     texts = dict()
     for name in ['text', 'text1', 'text2']:
         all_input_ids = torch.tensor([x[name]['input_ids'][:max_len] for x in batch])
-        all_attention_mask = torch.tensor([x[name]['token_type_ids'][:max_len] for x in batch])
-        all_token_type_ids = torch.tensor([x[name]['attention_mask'][:max_len] for x in batch])
+        all_token_type_ids = torch.tensor([x[name]['token_type_ids'][:max_len] for x in batch])
+        all_attention_mask = torch.tensor([x[name]['attention_mask'][:max_len] for x in batch])
         texts[name] = {
             'input_ids': all_input_ids,
             'attention_mask': all_attention_mask,
@@ -142,8 +142,10 @@ if __name__ == '__main__':
         for x in x_i.keys():
             x_i[x] = x_i[x].to(device)
             x_j[x] = x_j[x].to(device)
+        print(x_i, x_j)
         z_i, z_j, c_i, c_j = model(x_i, x_j)
         loss_instance = criterion_instance(z_i, z_j)
         loss_cluster = criterion_cluster(c_i, c_j)
         loss = loss_instance + loss_cluster
         print()
+        break
